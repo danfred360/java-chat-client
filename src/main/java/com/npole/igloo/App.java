@@ -1,4 +1,4 @@
-package com.npole.iglooclient;
+package com.npole.igloo;
 
 import java.net.*;
 import java.io.*;
@@ -12,6 +12,7 @@ public class App {
 
     private String server, username;
     private int port;
+    private boolean idebug = true;
 
     // constructor
     App(String server, int port, String username) {
@@ -34,18 +35,23 @@ public class App {
 
         // create both data streams
         try {
-            sInput = new ObjectInputStream(socket.getInputStream());
+            displayDebug("Trying to create object streams...");
             sOutput = new ObjectOutputStream(socket.getOutputStream());
+            displayDebug("socket output created...");
+            sInput = new ObjectInputStream(socket.getInputStream());
+            displayDebug("socket input created...");
         } catch (IOException eIO) {
             display("Exception creating new Input/Output streams: " + eIO);
             return false;
         }
 
         // create thread to listen from server
+        displayDebug("started listen from server thread...");
         new ListenFromServer().start();
 
         try {
             sOutput.writeObject(username);
+            displayDebug("Sending username to server...");
         } catch (IOException eIO) {
             display("Exception during login: " + eIO);
             disconnect();
@@ -58,8 +64,14 @@ public class App {
         System.out.println(msg);
     }
 
+    private void displayDebug(String msg) {
+        if (idebug)
+            System.out.println(msg);
+    }
+
     void sendMessage(ChatMessage msg) {
         try {
+            System.out.println("attempting to send msg: " + msg + "...");
             sOutput.writeObject(msg);
         } catch (IOException e) {
             display("Exception writing to server: " + e);
@@ -139,10 +151,14 @@ public class App {
                 break;
             } else if (msg.equalsIgnoreCase("WHOISIN")) {
                 app.sendMessage(new ChatMessage(ChatMessage.WHOISIN, ""));
+            } else if (msg.equalsIgnoreCase("ESKIMO")) {
+                app.sendMessage(new ChatMessage(ChatMessage.ESKIMO, ""));
             } else {
+                System.out.println("sending message...");
                 app.sendMessage(new ChatMessage(ChatMessage.MESSAGE, msg));
             }
         }
+        scan.close();
         app.disconnect();
     }
 

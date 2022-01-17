@@ -23,9 +23,11 @@ build-job:       # This job runs in the build stage, which runs first.
   tags:
     - java
   script:
-    - echo "Compiling the code..."
-    - mvn clean package # mvn install -B
-    - echo "Compile complete."
+    - echo "Cleaning maven project..."
+    - mvn package clean
+    - echo "Building maven project..."
+    - mvn package
+    - echo "Build complete."
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.

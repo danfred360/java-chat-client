@@ -1,4 +1,4 @@
-package com.npole.igloo;
+package com.npole.iglooclient;
 
 import static org.junit.Assert.assertTrue;
 
